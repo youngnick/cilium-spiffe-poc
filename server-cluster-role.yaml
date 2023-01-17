@@ -1,0 +1,100 @@
+# Role (namespace scoped) to be able to push certificate bundles to a configmap
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: spire-server-configmap-role
+  namespace: spire
+rules:
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs: ["patch", "get", "list"]
+---
+# Binds above role to spire-server service account
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: spire-server-configmap-role-binding
+  namespace: spire
+subjects:
+- kind: ServiceAccount
+  name: spire-server
+  namespace: spire
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: spire-server-configmap-role
+---
+# ClusterRole to allow spire-server node attestor to query Token Review API
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: spire-server-trust-role
+rules:
+- apiGroups: ["authentication.k8s.io"]
+  resources: ["tokenreviews"]
+  verbs: ["create"]
+---
+# Binds above cluster role to spire-server service account
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: spire-server-trust-role-binding
+subjects:
+- kind: ServiceAccount
+  name: spire-server
+  namespace: spire
+roleRef:
+  kind: ClusterRole
+  name: spire-server-trust-role
+  apiGroup: rbac.authorization.k8s.io
+---
+# Required cluster role to allow spire-server to query k8s API server
+# for pods for psat attestation
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: spire-server-pod-role
+rules:
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get"]
+---
+# Binds above role to spire-server service account
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: spire-server-pod-role-binding
+  namespace: spire
+subjects:
+- kind: ServiceAccount
+  name: spire-server
+  namespace: spire
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: spire-server-pod-role
+---
+# Required cluster role to allow spire-server to query k8s API server
+# for nodes for psat attestation
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: spire-server-node-role
+rules:
+- apiGroups: [""]
+  resources: ["nodes","nodes/proxy"]
+  verbs: ["get"]
+---
+# Binds above role to spire-server service account
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: spire-server-node-role-binding
+subjects:
+- kind: ServiceAccount
+  name: spire-server
+  namespace: spire
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: spire-server-node-role
