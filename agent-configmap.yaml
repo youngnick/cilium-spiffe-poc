@@ -4,15 +4,21 @@ metadata:
   name: spire-agent
   namespace: spire
 data:
+#       socket_path = "/run/spire/sockets/agent/agent.sock"
   agent.conf: |
     agent {
       data_dir = "/run/spire"
       log_level = "DEBUG"
       server_address = "spire-server"
       server_port = "8081"
-      socket_path = "/run/spire/sockets/agent.sock"
+      socket_path = "/run/spire/sockets/agent/agent.sock"
+      admin_socket_path ="/run/spire/sockets/admin.sock"
       trust_bundle_path = "/run/spire/bundle/bundle.crt"
       trust_domain = "spiffe.cilium.io"
+      authorized_delegates = [
+        "spiffe://spiffe.cilium.io/cilium-agent",
+        "spiffe://spiffe.cilium.io/dclient",
+      ]
     }
 
     plugins {
@@ -37,10 +43,6 @@ data:
         }
       }
 
-      WorkloadAttestor "unix" {
-          plugin_data {
-          }
-      }
     }
 
     health_checks {
