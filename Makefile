@@ -17,7 +17,6 @@ install:
 	kubectl apply -f agent-configmap.yaml
 	kubectl apply -f agent-daemonset.yaml
 
-# kubectl apply -f client-deployment.yaml
-	
+	@echo Now you can "kubectl apply -f fakeagent-deployment.yaml" when you are ready to install the delegated identity client.
 uninstall:
 	kubectl delete -f spire-namespace.yaml
