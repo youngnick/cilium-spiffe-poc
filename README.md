@@ -7,35 +7,37 @@ It's based on the [SPIRE Kubernetes install instructions](https://spiffe.io/docs
   * Adds a fake agent deployment using delegated-client that exercises the SPIFFE DelegatedIdentity API.
 
 
-TODO: Import installation notes and commands into this file, so that you can actually install it.
-
 Some SPIRE server commands that may prove helpful:
 ```
-  kubectl exec -n spire spire-server-0 -- \\
-      /opt/spire/bin/spire-server entry create \\
-      -spiffeID spiffe://spiffe.cilium.io/cilium-agent \\
-      -parentID spiffe://spiffe.cilium.io/ns/spire/sa/spire-agent \\
-      -selector k8s:ns:default \\
+  kubectl exec -n spire spire-server-0 -- \
+      /opt/spire/bin/spire-server entry create \
+      -spiffeID spiffe://spiffe.cilium.io/cilium-agent \
+      -parentID spiffe://spiffe.cilium.io/ns/spire/sa/spire-agent \
+      -selector k8s:ns:default \
       -selector k8s:sa:test-client
   
-  kubectl exec -n spire spire-server-0 -- \\
-      /opt/spire/bin/spire-server entry create \\
-      -spiffeID spiffe://spiffe.cilium.io/dclient \\
-      -parentID spiffe://spiffe.cilium.io/ns/spire/sa/spire-agent \\
-      -selector k8s:ns:default \\
+  kubectl exec -n spire spire-server-0 -- \
+      /opt/spire/bin/spire-server entry create \
+      -spiffeID spiffe://spiffe.cilium.io/dclient \
+      -parentID spiffe://spiffe.cilium.io/ns/spire/sa/spire-agent \
+      -selector k8s:ns:default \
       -selector k8s:sa:fakeagent
       
-  kubectl exec -n spire spire-server-0 -- \\
-      /opt/spire/bin/spire-server entry create \\
-      -spiffeID spiffe://spiffe.cilium.io/sclient \\
-      -parentID spiffe://spiffe.cilium.io/dclient \\
-      -selector k8s:ns:default \\
+  kubectl exec -n spire spire-server-0 -- \
+      /opt/spire/bin/spire-server entry create \
+      -spiffeID spiffe://spiffe.cilium.io/sclient \
+      -parentID spiffe://spiffe.cilium.io/dclient \
+      -selector k8s:ns:default \
       -selector k8s:label:k8s-app:sclient
   
-  kubectl exec -n spire spire-server-0 -- \\
-      /opt/spire/bin/spire-server entry create \\
-      -spiffeID spiffe://spiffe.cilium.io/sclient2\\
-      -parentID spiffe://spiffe.cilium.io/dclient \\
-      -selector k8s:ns:default \\
+  kubectl exec -n spire spire-server-0 -- \
+      /opt/spire/bin/spire-server entry create \
+      -spiffeID spiffe://spiffe.cilium.io/sclient2\
+      -parentID spiffe://spiffe.cilium.io/dclient \
+      -selector k8s:ns:default \
       -selector k8s:label:k8s-app:sclient2
+
+# Get the list of entries from the SPIRE server:
+kubectl exec -n spire spire-server-0 -- \
+      /opt/spire/bin/spire-server entry show
 ```
