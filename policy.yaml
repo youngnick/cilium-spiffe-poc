@@ -1,0 +1,30 @@
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: auth-egress
+  namespace: cilium-test
+spec:
+  endpointSelector:
+    matchLabels:
+      kind: client
+  egress:
+    - toEndpoints:
+        - matchLabels:
+            kind: echo
+      toPorts:
+        - ports:
+            - port: "8080"
+              protocol: TCP
+      auth:
+        type: "mtls-spiffe" # currently overwritten in code
+    - toEndpoints:
+      - matchLabels:
+          "k8s:io.kubernetes.pod.namespace": "kube-system"
+          "k8s:k8s-app": "kube-dns"
+      toPorts:
+        - ports:
+            - port: "53"
+              protocol: ANY
+          rules:
+            dns:
+              - matchPattern: "*"

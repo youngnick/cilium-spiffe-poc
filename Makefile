@@ -43,25 +43,21 @@ install:
 		/opt/spire/bin/spire-server entry create \
 		-spiffeID spiffe://spiffe.cilium.io/dclient \
 		-parentID spiffe://spiffe.cilium.io/ns/spire/sa/spire-agent \
-		-selector k8s:ns:default \
-		-selector k8s:sa:fakeagent
-
-	@echo Now you can "kubectl apply -f fakeagent-deployment.yaml" when you are ready to install the delegated identity client.
+		-selector k8s:ns:kube-system \
+		-selector k8s:sa:cilium
 
 add-new-identities:
 	kubectl exec -n spire spire-server-0 -- \
 		/opt/spire/bin/spire-server entry create \
 		-spiffeID spiffe://spiffe.cilium.io/sclient \
 		-parentID spiffe://spiffe.cilium.io/dclient \
-		-selector k8s:ns:default \
-		-selector k8s:label:k8s-app:sclient
+		-selector cilium:mtls
 
 	kubectl exec -n spire spire-server-0 -- \
 		/opt/spire/bin/spire-server entry create \
-		-spiffeID spiffe://spiffe.cilium.io/sclient2 \
+		-spiffeID spiffe://spiffe.cilium.io/id/1 \
 		-parentID spiffe://spiffe.cilium.io/dclient \
-		-selector k8s:ns:default \
-		-selector k8s:label:k8s-app:sclient2
+		-selector cilium:mtls
 
 uninstall:
 	kubectl delete -f spire-namespace.yaml
