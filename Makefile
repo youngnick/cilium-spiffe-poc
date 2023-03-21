@@ -26,7 +26,6 @@ install:
 	kubectl exec -n spire spire-server-0 -- \
 		/opt/spire/bin/spire-server entry create \
 		-spiffeID spiffe://spiffe.cilium.io/ns/spire/sa/spire-agent \
-		-selector k8s_psat:cluster:cilium-spiffe \
 		-selector k8s_psat:agent_ns:spire \
 		-selector k8s_psat:agent_sa:spire-agent \
 		-node
@@ -44,8 +43,14 @@ install:
 		-spiffeID spiffe://spiffe.cilium.io/dclient \
 		-parentID spiffe://spiffe.cilium.io/ns/spire/sa/spire-agent \
 		-selector k8s:ns:kube-system \
-		-selector k8s:sa:cilium
-
+		-selector k8s:sa:cilium 
+		
+	kubectl exec -n spire spire-server-0 -- \
+		/opt/spire/bin/spire-server entry create \
+		-spiffeID spiffe://spiffe.cilium.io/cilium-operator \
+		-parentID spiffe://spiffe.cilium.io/ns/spire/sa/spire-agent \
+		-selector k8s:ns:kube-system \
+		-selector k8s:sa:cilium-operator 
 add-new-identities:
 	kubectl exec -n spire spire-server-0 -- \
 		/opt/spire/bin/spire-server entry create \
