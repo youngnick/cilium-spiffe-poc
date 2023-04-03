@@ -20,6 +20,10 @@ data:
         organization = ["Cilium SPIFFE"],
         common_name = "SPIRE",
       }
+
+      admin_ids = [
+        "spiffe://spiffe.cilium.io/cilium-operator",
+      ]
     }
 
     plugins {
